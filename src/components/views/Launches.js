@@ -56,7 +56,7 @@ function Content() {
     const { data, busy, page } = useContext(LaunchContext);
     if(busy) return <Loading />
     if(data.length === 0) return <Empty />
-    return data.slice(page, page + 10).map(launch => {
+    return data.slice(page * 10, page * 10 + 10).map(launch => {
         const no = data.indexOf(launch) + 1;
         return <Row key={no} no={no} launch={launch} />
     })
@@ -119,7 +119,7 @@ function Datepicker() {
             setTime([start.format('YYYY-MM-DD'), end.format('YYYY-MM-DD'), label]);
         });
         return () => $('.daterangepicker').remove();
-    }, []);
+    }, [setTime]);
     return <div ref={ref}>
         <div className="text">{time[2]} <i className="angle down icon" /></div>
     </div>
@@ -162,7 +162,7 @@ export default function Launches() {
     const [page, setPage] = useState(0);
     const [type, setType] = useState('all');
     const [time, setTime] = useState([
-        moment().subtract(5, 'month').startOf('month').format('YYYY-MM-DD'),
+        moment().subtract(6, 'month').startOf('month').format('YYYY-MM-DD'),
         moment().subtract(1, 'month').endOf('month').format('YYYY-MM-DD'),
         'Past 6 Months',
     ]);
@@ -179,6 +179,7 @@ export default function Launches() {
         if(type === 'upcoming') return d.upcoming;
         if(type === 'success') return d.launch_success;
         if(type === 'failed') return !d.launch_success && !d.upcoming;
+        return false;
     }).filter(d => {
         if(time) {
             const start = moment(time[0], 'YYYY-MM-DD')
