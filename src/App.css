@@ -75,3 +75,8 @@
   color: #981B1C;
   background: #FDE2E1;
 }
+/* datepicker */
+.dp {
+  display: inline-block;
+  cursor: pointer;
+}
