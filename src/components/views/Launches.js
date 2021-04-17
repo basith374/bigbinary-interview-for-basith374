@@ -1,11 +1,10 @@
-import { createContext, useContext, useEffect, useMemo, useRef, useState } from "react";
-import classNames from "classnames";
+import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import moment from 'moment';
-import $ from 'jquery';
-import 'daterangepicker';
-import 'daterangepicker/daterangepicker.css'
 import spinner from '../../spinner.gif';
 import api from "lib/api";
+import Dropdown from "components/Dropdown";
+import Datepicker from "components/Datepicker";
+import Pagination from "components/Pagination";
 
 function Loading() {
     return <tr className="emp">
@@ -81,76 +80,19 @@ function Table() {
     </table>
 }
 
-function Dropdown() {
-    const { type, setType } = useContext(LaunchContext);
-    const [active, setActive] = useState(false);
-    const items = {
+function Toolbar() {
+    const { type, setType, time, setTime } = useContext(LaunchContext);
+    const dropdownItems = {
         'all': 'All Launches',
         'upcoming': 'Upcoming Launches',
         'success': 'Successful Launches',
         'failed': 'Failed Launches',
     }
-    return <div className={'ui dropdown'} onClick={() => setActive(!active)}>
-        <div className="text">{items[type]}</div>
-        <i className="angle down icon" />
-        <div className={'menu'} style={{ display: active ? 'block' : null }}>
-            {Object.keys(items).map(k => <div key={k}
-                className="item"
-                onClick={() => setType(k)}>{items[k]}</div>)}
-        </div>
-    </div>
-}
-
-function Datepicker() {
-    const { setTime, time } = useContext(LaunchContext);
-    const ref = useRef();
-    useEffect(() => {
-        $(ref.current).daterangepicker({
-            ranges: {
-                'Past week': [moment().subtract(1, 'week').startOf('week'), moment().subtract(1, 'week').endOf('week')],
-                'Past Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')],
-                'Past 3 Months': [moment().subtract(3, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')],
-                'Past 6 Months': [moment().subtract(6, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')],
-                'Past year': [moment().subtract(1, 'year').startOf('year'), moment().subtract(1, 'year').endOf('year')],
-                'Past 2 years': [moment().subtract(2, 'year').startOf('year'), moment().subtract(1, 'year').endOf('year')],
-            },
-            alwaysShowCalendars: true,
-        }, function(start, end, label) {
-            setTime([start.format('YYYY-MM-DD'), end.format('YYYY-MM-DD'), label]);
-        });
-        return () => $('.daterangepicker').remove();
-    }, [setTime]);
-    return <div ref={ref}>
-        <div className="text">{time[2]} <i className="angle down icon" /></div>
-    </div>
-}
-
-function Toolbar() {
     return <div className="tb">
         <div className="tb-l">
-            <Datepicker />
+            <Datepicker {...{ time, setTime }} />
         </div>
-        <Dropdown />
-    </div>
-}
-
-function Pagination() {
-    const { data, setPage, page } = useContext(LaunchContext);
-    const pages = Math.ceil(data.length / 10);
-    return <div className="pg">
-        <div onClick={() => setPage(Math.max(0, page - 1))}
-            className="pg-i">
-            <i className="icon angle left"></i>
-        </div>
-        {[...Array(pages).keys()].map(f => {
-            return <div key={f}
-            onClick={() => setPage(f)}
-            className={classNames('pg-i', { 'a': f === page })}>{f + 1}</div>
-        })}
-        <div onClick={() => setPage(Math.min(pages - 1, page + 1))}
-            className="pg-i">
-            <i className="icon angle right"></i>
-        </div>
+        <Dropdown items={dropdownItems} value={type} setValue={setType} />
     </div>
 }
 
@@ -201,7 +143,7 @@ export default function Launches() {
             <Toolbar />
             <Table />
             <div className="pg-c">
-                <Pagination />
+                <Pagination {...{ data: filteredData, setPage, page }} />
             </div>
         </div>
     </LaunchContext.Provider>
