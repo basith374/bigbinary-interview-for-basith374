@@ -22,7 +22,7 @@ export default function Datepicker({ setTime, time }) {
         });
         return () => $('.daterangepicker').remove();
     }, [setTime]);
-    return <div ref={ref}>
+    return <div ref={ref} className="dp">
         <div className="text">{time[2]} <i className="angle down icon" /></div>
     </div>
 }
