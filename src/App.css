@@ -15,6 +15,7 @@
 .App-content table {
   width: 100%;
 }
+/* toolbar */
 .tb {
   display: flex;
   margin-bottom: 2rem;
@@ -22,6 +23,7 @@
 .tb-l {
   flex: 1;
 }
+/* empty container */
 .emp {
   height: 100%;
 }
@@ -79,4 +81,8 @@
 .dp {
   display: inline-block;
   cursor: pointer;
+}
+/* table */
+.ui.table tr th {
+  font-weight: 400;
 }
